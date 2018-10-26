@@ -20,23 +20,36 @@ class Detail extends React.Component {
 
     this.setState({ loading: true });
 
-    fetch(`${API_URL}/cryptocurrencies/${currencyId}`)
-      .then(handleResponse)
-      .then((currency) => {
-        this.setState({
-          loading: false,
-          error: null,
-          currency,
-        });
-      })
-      .catch((error) => {
-        this.setState({
-          loading: false,
-          error: error.errorMessage,
-        });
-      });
+    this.fetchCurrency(currencyId)
   }
 
+  componentWillReceiveProps(nextProps){
+    if(this.props.location.pathname !== nextProps.location.pathname){
+      // get new currency id from url
+      const newCurrencyId = nextProps.match.params.id;
+    
+        this.fetchCurrency(newCurrencyId);
+    }
+    
+  }
+
+  fetchCurrency(currencyId){
+    fetch(`${API_URL}/cryptocurrencies/${currencyId}`)
+    .then(handleResponse)
+    .then((currency) => {
+      this.setState({
+        loading: false,
+        error: null,
+        currency,
+      });
+    })
+    .catch((error) => {
+      this.setState({
+        loading: false,
+        error: error.errorMessage,
+      });
+    });
+  }
   render() {
     const { loading, error, currency } = this.state;
 
